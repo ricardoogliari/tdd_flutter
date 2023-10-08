@@ -115,4 +115,25 @@ void main() {
       expect: () => <TaskState>[],
     );
   });
+
+  group("Adding one task", () {
+    testWidgets(
+      "Find a TextField, enter text in it, and find a button with text 'Add', and then tap it to find a new TaskCell created.",
+          (tester) async {
+        await tester.pumpWidget(MyApp());
+
+        final textField = find.byType(TextField);
+        final taskText = "Finish Widget tests";
+
+        expect(textField, findsOneWidget);
+        expect(find.byType(TaskCell), findsNothing);
+        await tester.enterText(textField, taskText);
+        await tester.tap(find.text("Add task"));
+
+        await tester.pumpAndSettle();
+
+        expect(find.byType(TaskCell), findsOneWidget);
+      },
+    );
+  });
 }
