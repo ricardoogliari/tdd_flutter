@@ -70,5 +70,21 @@ void main() {
         ])
       ],
     );
+
+    blocTest<TaskCubit, TaskState>(
+      'Given a TaskInitial, emits [] when completeOneTask is added.',
+      seed: () => TaskInitial(),
+      build: () => TaskCubit(),
+      act: (cubit) => cubit.completeOneTask(Task(text: "2")),
+      expect: () => <TaskState>[],
+    );
+
+    blocTest<TaskCubit, TaskState>(
+      'Given a TaskUpdated with 0 task, emits [] when completeOneTask is added.',
+      seed: () => TaskUpdated(tasks: []),
+      build: () => TaskCubit(),
+      act: (cubit) => cubit.completeOneTask(Task(text: "2")),
+      expect: () => <TaskState>[],
+    );
   });
 }
