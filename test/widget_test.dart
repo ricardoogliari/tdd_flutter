@@ -55,5 +55,20 @@ void main() {
         TaskUpdated(tasks: [task, secondTask])
       ],
     );
+
+    blocTest<TaskCubit, TaskState>(
+      'emits [TaskUpdated] when completeOneTask is added.',
+      seed: () => TaskUpdated(
+          tasks: [Task(text: "1"), Task(text: "2"), Task(text: "3")]),
+      build: () => TaskCubit(),
+      act: (cubit) => cubit.completeOneTask(Task(text: "2")),
+      expect: () => <TaskState>[
+        TaskUpdated(tasks: [
+          Task(text: "1"),
+          Task(text: "2", isDone: true),
+          Task(text: "3")
+        ])
+      ],
+    );
   });
 }
