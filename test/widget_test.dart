@@ -86,5 +86,33 @@ void main() {
       act: (cubit) => cubit.completeOneTask(Task(text: "2")),
       expect: () => <TaskState>[],
     );
+
+    blocTest<TaskCubit, TaskState>(
+      'Given a TaskUpdated with 3 tasks, emits [TaskUpdated] when deleteOneTask is called, with a task contained in the list.',
+      seed: () => TaskUpdated(
+          tasks: [Task(text: "1"), Task(text: "2"), Task(text: "3")]),
+      build: () => TaskCubit(),
+      act: (cubit) => cubit.deleteOneTask(Task(text: "1")),
+      expect: () => <TaskState>[
+        TaskUpdated(tasks: [Task(text: "2"), Task(text: "3")])
+      ],
+    );
+
+    blocTest<TaskCubit, TaskState>(
+      'Given a TaskInitial, emits [TaskUpdated] when deleteOneTask is called.',
+      seed: () => TaskInitial(),
+      build: () => TaskCubit(),
+      act: (cubit) => cubit.deleteOneTask(Task(text: "1")),
+      expect: () => <TaskState>[],
+    );
+
+    blocTest<TaskCubit, TaskState>(
+      'Given a TaskUpdated with 3 tasks, emits [TaskUpdated] when deleteOneTask is called, with a task is NOT contained in the list.',
+      seed: () => TaskUpdated(
+          tasks: [Task(text: "0"), Task(text: "2"), Task(text: "3")]),
+      build: () => TaskCubit(),
+      act: (cubit) => cubit.deleteOneTask(Task(text: "1")),
+      expect: () => <TaskState>[],
+    );
   });
 }
