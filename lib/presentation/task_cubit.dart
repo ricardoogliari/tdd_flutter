@@ -20,6 +20,7 @@ class TaskCubit extends Cubit<TaskState> {
       final tasks = [...(state as TaskUpdated).tasks];
 
       final index = tasks.indexWhere((element) => element.text == task.text);
+      if (index == -1) return;
 
       tasks.removeAt(index);
       tasks.insert(index, task.copyWith(isDone: true));
