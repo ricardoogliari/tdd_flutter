@@ -43,5 +43,17 @@ void main() {
         TaskUpdated(tasks: <Task>[task])
       ],
     );
+
+    final secondTask = Task(text: "Second task");
+
+    blocTest<TaskCubit, TaskState>(
+      'given a TaskUpdated with one task, emits [TaskUpdated] when addOneTask is called.',
+      seed: () => TaskUpdated(tasks: [task]),
+      build: () => TaskCubit(),
+      act: (cubit) => cubit.addOneTask(secondTask),
+      expect: () => <TaskState>[
+        TaskUpdated(tasks: [task, secondTask])
+      ],
+    );
   });
 }
