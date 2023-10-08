@@ -28,4 +28,13 @@ class TaskCubit extends Cubit<TaskState> {
       emit(TaskUpdated(tasks: tasks));
     }
   }
+
+  deleteOneTask(Task task) {
+    if (state is TaskUpdated) {
+      final tasks = [...(state as TaskUpdated).tasks];
+      tasks.removeWhere((element) => element.text == task.text);
+
+      emit(TaskUpdated(tasks: tasks));
+    }
+  }
 }
