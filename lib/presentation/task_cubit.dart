@@ -14,4 +14,17 @@ class TaskCubit extends Cubit<TaskState> {
       emit(TaskUpdated(tasks: [...(state as TaskUpdated).tasks, task]));
     }
   }
+
+  completeOneTask(Task task) {
+    if (state is TaskUpdated) {
+      final tasks = [...(state as TaskUpdated).tasks];
+
+      final index = tasks.indexWhere((element) => element.text == task.text);
+
+      tasks.removeAt(index);
+      tasks.insert(index, task.copyWith(isDone: true));
+
+      emit(TaskUpdated(tasks: tasks));
+    }
+  }
 }
