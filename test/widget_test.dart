@@ -119,5 +119,46 @@ void main() {
         expect(find.byType(TaskCell), findsOneWidget);
       },
     );
+
+    testWidgets(
+      "Find a TextField, enter text in it, and find a button with text 'Add', and then tap it to verify if the TextField has been emptied.",
+          (tester) async {
+        await tester.pumpWidget(MyApp());
+
+        final textField = find.byType(TextField);
+        final taskText = "Finish Widget tests";
+
+        // Textfield should be empty
+        expect(
+            (textField.evaluate().first.widget as TextField).controller == null,
+            false);
+        expect(
+          (textField.evaluate().first.widget as TextField).controller?.text ??
+            "Not empty",
+            "",
+        );
+
+        expect(textField, findsOneWidget);
+        expect(find.byType(TaskCell), findsNothing);
+        await tester.enterText(textField, taskText);
+
+        // TextField should not be empty.
+        expect(
+          (textField.evaluate().first.widget as TextField).controller?.text ??
+              "Not empty",
+          taskText,
+        );
+        await tester.tap(find.text("Add task"));
+
+        await tester.pumpAndSettle();
+
+        // TextField should have been emptied.
+        expect(
+          (textField.evaluate().first.widget as TextField).controller?.text ??
+              "Not empty",
+          "",
+        );
+      },
+    );
   });
 }
