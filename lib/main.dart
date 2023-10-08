@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:to_do_list/model/task.dart';
+import 'package:to_do_list/presentation/task_cubit.dart';
+import 'package:to_do_list/task_cell.dart';
 
 void main() {
   runApp(const MyApp());
@@ -7,64 +11,74 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+      title: 'Flutter todo list using TDD',
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text("ToDo List"),
+        ),
+        body: BlocProvider(
+          create: (context) => TaskCubit(),
+          child: HomeScreen(),
+        ),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
+    return Padding(
+      padding: const EdgeInsets.all(12.0),
+      child: Column(
+        children: [
+          AddTaskSection(),
+          Expanded(
+            child: BlocBuilder<TaskCubit, TaskState>(builder: (context, state) {
+              if (state is TaskUpdated) {
+                return ListView(
+                  children: state.tasks.mapToList((task) => TaskCell(task: task)),
+                );
+              }
+
+              return Container();
+            }),
+          )
+        ],
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
+    );
+  }
+}
+
+extension ListExtension<E> on Iterable<E> {
+  List<T> mapToList<T>(T Function(E) mapper) => map(mapper).toList();
+}
+
+class AddTaskSection extends StatelessWidget {
+  const AddTaskSection({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final controller = TextEditingController();
+
+    return Row(
+      children: [
+        Expanded(
+          child: TextField(
+            controller: controller,
+          ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+        TextButton(
+          onPressed: () =>
+              context.read<TaskCubit>().addOneTask(Task(text: controller.text)),
+          child: Text("Add task"),
+        )
+      ],
     );
   }
 }
