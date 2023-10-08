@@ -161,4 +161,49 @@ void main() {
       },
     );
   });
+
+  group("Complete one task", () {
+    testWidgets("Complete one task, and verify that the correct icon is showed",
+            (tester) async {
+          final taskText = "Finish test widgets";
+
+          await _addTask(tester, taskText: taskText);
+
+          final taskCell = find.byType(TaskCell);
+          expect(taskCell, findsOneWidget);
+
+          expect(find.byType(IconButton), findsOneWidget);
+          expect(find.byIcon(Icons.circle), findsOneWidget);
+
+          await tester.tap(find.byType(IconButton));
+          await tester.pumpAndSettle();
+
+          expect(find.byIcon(Icons.check), findsOneWidget);
+          expect(
+            taskCell.accessFirstWidgetAs<TaskCell>().task,
+            Task(text: taskText, isDone: true),
+          );
+        });
+  });
+}
+
+Future<void> _addTask(
+    WidgetTester tester, {
+      String taskText = "Finish Widget tests",
+    }) async {
+  await tester.pumpWidget(MyApp());
+
+  final textField = find.byType(TextField);
+
+  expect(textField, findsOneWidget);
+  expect(find.byType(TaskCell), findsNothing);
+  await tester.enterText(textField, taskText);
+  await tester.tap(find.text("Add task"));
+
+  await tester.pumpAndSettle();
+}
+
+extension FinderExtension on Finder {
+  Widget accessFirstWidget() => evaluate().first.widget;
+  E accessFirstWidgetAs<E extends Widget>() => accessFirstWidget() as E;
 }
