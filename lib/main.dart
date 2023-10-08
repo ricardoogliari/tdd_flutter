@@ -71,11 +71,14 @@ class AddTaskSection extends StatelessWidget {
         Expanded(
           child: TextField(
             controller: controller,
+            decoration: InputDecoration(hintText: "Enter your task..."),
           ),
         ),
         TextButton(
-          onPressed: () =>
-              context.read<TaskCubit>().addOneTask(Task(text: controller.text)),
+          onPressed: () {
+            context.read<TaskCubit>().addOneTask(Task(text: controller.text));
+            controller.text = "";
+          },
           child: Text("Add task"),
         )
       ],
