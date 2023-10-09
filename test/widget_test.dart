@@ -185,6 +185,25 @@ void main() {
           );
         });
   });
+
+  group("Delete one task : ", () {
+    testWidgets("", (tester) async {
+      final taskText = "Finish test widgets";
+
+      await _addTask(tester, taskText: taskText);
+
+      final taskCell = find.byType(TaskCell);
+      expect(taskCell, findsOneWidget);
+
+      await tester.drag(
+        taskCell,
+        Offset(-500, 0),
+      );
+      await tester.pumpAndSettle();
+
+      expect(taskCell, findsNothing);
+    });
+  });
 }
 
 Future<void> _addTask(
