@@ -42,7 +42,17 @@ class HomeScreen extends StatelessWidget {
             child: BlocBuilder<TaskCubit, TaskState>(builder: (context, state) {
               if (state is TaskUpdated) {
                 return ListView(
-                  children: state.tasks.mapToList((task) => TaskCell(task: task)),
+                  children: state.tasks.mapToList(
+                        (task) => Dismissible(
+                      key: Key(task.text),
+                      child: TaskCell(task: task),
+                      onDismissed: (direction) {
+                        if (direction == DismissDirection.endToStart) {
+                          context.read<TaskCubit>().deleteOneTask(task);
+                        }
+                      },
+                    ),
+                  ),
                 );
               }
 
